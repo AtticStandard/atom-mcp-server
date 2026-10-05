@@ -40,6 +40,22 @@ export async function handleGetPriceHistory(
       order: "date.desc",
       limit: params.weeks * 3,
     });
+    const spotRows = await queryTable<Record<string, any>>("index_values", filters, {
+      select:
+        "date,spot_input_price,spot_input_p25,spot_input_p75,spot_cached_price,spot_cached_p25,spot_cached_p75,spot_output_price,spot_output_p25,spot_output_p75",
+      order: "date.desc",
+      limit: params.weeks + 5,
+    });
+    const spotBy = new Map(spotRows.map((s) => [String(s.date).slice(0, 10), s]));
+    const spotOf = (key: string, d: "input" | "cached" | "output") => {
+      const s = spotBy.get(key);
+      if (!s || s[`spot_${d}_price`] == null) return null;
+      return {
+        median: Number(s[`spot_${d}_price`]),
+        p25: s[`spot_${d}_p25`] != null ? Number(s[`spot_${d}_p25`]) : null,
+        p75: s[`spot_${d}_p75`] != null ? Number(s[`spot_${d}_p75`]) : null,
+      };
+    };
     const wanted = params.direction ? dirKey(params.direction) : null;
     const byDate = new Map<string, Record<string, any>>();
     for (const r of rows) {
@@ -47,7 +63,7 @@ export async function handleGetPriceHistory(
       if (wanted && d !== wanted) continue;
       const key = String(r.date).slice(0, 10);
       const e = byDate.get(key) || { date: key };
-      e[d] = { level: round(r.level, 2), change_wow_pct: round(r.wow, 2), price: r.price };
+      e[d] = { level: round(r.level, 2), change_wow_pct: round(r.wow, 2), price: r.price, spot: spotOf(key, d) };
       byDate.set(key, e);
     }
     const series = [...byDate.values()].sort((a, b) => (a.date < b.date ? -1 : 1)).slice(-params.weeks);

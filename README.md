@@ -37,7 +37,7 @@ This server puts that data inside any MCP-compatible assistant (Claude, ChatGPT,
 Each index carries two numbers:
 
 - **Benchmark**: the chained level, May 2026 = 100 (the average of that month's weeks), with week, month and vs-base changes.
-- **Spot**: what the market charges this week, in dollars. Each model is taken at the median of its vendors' prices, and the spot is the median across those models, with the interquartile range.
+- **Spot**: what the market charges this week, in dollars. Each model is taken at the median of its vendors' prices, and the spot is the median across those models, with the interquartile range. Its change is stated against its own May 2026 average, month on month and week on week, and because the spot follows the market as it stands, that change reflects models arriving and leaving as well as repricing.
 
 Token prices are per 1,000 tokens. Other modalities use their own unit.
 
@@ -47,8 +47,8 @@ Token prices are per 1,000 tokens. Other modalities use their own unit.
 
 | Tool | Tier | What it returns |
 |---|---|---|
-| `get_index_benchmarks` | Free | Every published index at the current week: benchmark level, changes, spot price and range, coverage |
-| `get_price_history` | Free / PRO | Weekly index series (free); week-by-week price of a model at every vendor, with each repricing (PRO) |
+| `get_index_benchmarks` | Free | Every published index at the current week: benchmark level and changes, spot price, range and changes, coverage with the May 2026 basket |
+| `get_price_history` | Free / PRO | Weekly index series with the spot price and its range (free); week-by-week price of a model at every vendor, with each repricing (PRO) |
 | `get_kpis` | Free | The nine market KPIs: output premium, caching discount, caching availability, repricing activity, repricing depth, post-launch drift, multi-vendor spread, first-party premium, marketplace premium |
 | `get_model_intelligence` | Free | Six capability measures: reasoning tier share, long-context saturation, context ceiling, output ceiling spread, training cutoff lag, vendor modality breadth |
 | `get_index_constituents` | Free / PRO | What is inside an index basket: composition by channel, origin, tier and license (free); model-by-model basket with vendors (PRO) |

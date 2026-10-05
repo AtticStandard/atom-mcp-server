@@ -8,7 +8,7 @@
 // ============================================================
 
 export const SERVER_NAME = "attic-standard-mcp";
-export const SERVER_VERSION = "2.0.0";
+export const SERVER_VERSION = "2.1.0";
 
 export const BRAND = "Attic Standard";
 export const PRO_NAME = "Attic Standard MCP PRO";
@@ -78,6 +78,11 @@ export const MARKET_KPIS: Record<string, { label: string; group: string; definit
     definition: "The share of models priced higher on a cloud marketplace than by the median independent host selling the same model." },
 };
 
+export const BASE_MONTH = "2026-05";
+export const BASE_MONTH_END = "2026-06-01";
+
 export const BENCHMARK_NOTE =
-  "Benchmark: the chained level, expressed as May 2026 = 100 (the average of that month's weeks). " +
-  "Spot: what the market charges this week, in dollars; each model is taken at the median of its vendors' prices, and the spot is the median across those models.";
+  "Benchmark: the chained level, expressed as May 2026 = 100 (the average of that month's weeks); it moves only when models present in consecutive weeks are repriced, and each model joins from its second priced week. " +
+  "Spot: what the market charges this week, in dollars; each model is taken at the median of its vendors' prices, and the spot is the median across those models, with the 25th and 75th percentiles. " +
+  "Spot changes are measured against the spot's own May 2026 average, four published weeks back and one week back, so they reflect models arriving and leaving as well as repricing. " +
+  "Where a basket averaged fewer than 15 models in May 2026, or today's count differs from that average by more than half, changed_since_base is true: read spot changes with that in view.";

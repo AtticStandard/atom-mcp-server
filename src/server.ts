@@ -80,7 +80,7 @@ export function createServer(): McpServer {
 
 Six families: Modality (text, multimodal, image, video, audio, voice, embeddings), Channel (model developers, cloud marketplaces, inference platforms, neoclouds), Tier (flagship, core, compact), License (open weights, restricted weights, proprietary), Origin (United States, China) and Use case (reasoning, coding).
 
-For each index and direction (input, cached input, output) it returns the benchmark level (May 2026 = 100) with week, month and vs-base changes, the spot price (median, p25, p75 in dollars) and coverage counts.
+For each index and direction (input, cached input, output) it returns the benchmark level (May 2026 = 100) with week, month and vs-base changes, the spot price (median, p25, p75 in dollars) with its own week, month and vs-base changes, and coverage counts with the May 2026 basket size, flagged where the basket has changed materially since the base.
 
 ${FREE} ${UNITS}
 
@@ -95,7 +95,7 @@ Examples:
   add(
     "get_price_history",
     "Price history",
-    `Weekly history. With index_code: the index series (benchmark level, May 2026 = 100, and spot price) for up to 260 weeks; free. With model_name: every vendor's price for that model week by week, showing when each SKU was repriced; ${PRO_NAME}.
+    `Weekly history. With index_code: the index series (benchmark level, May 2026 = 100, and the spot price with its 25th and 75th percentiles) for up to 260 weeks; free. With model_name: every vendor's price for that model week by week, showing when each SKU was repriced; ${PRO_NAME}.
 
 ${UNITS}
 
