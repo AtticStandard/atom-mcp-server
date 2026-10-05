@@ -1,6 +1,6 @@
 {
   "name": "atom-mcp-server",
-  "mcpName": "io.github.A7OM-AI/atom-mcp-server",
+  "mcpName": "io.github.AtticStandard/atom-mcp-server",
   "version": "2.1.0",
   "description": "Attic Standard: the global price benchmark for AI inference, for agents. 23 price indexes, 9 market KPIs and SKU-level prices across 58 vendors, in 11 MCP tools.",
   "type": "module",
@@ -11,7 +11,7 @@
   "homepage": "https://atticstandard.com/mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/A7OM-AI/atom-mcp-server"
+    "url": "https://github.com/AtticStandard/atom-mcp-server"
   },
   "scripts": {
     "build": "tsc",
