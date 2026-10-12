@@ -7,7 +7,7 @@
 // ============================================================
 
 import { z } from "zod";
-import { enc, getActiveDate, queryAll } from "../supabase.js";
+import { enc, getActiveDate, queryAll, queryPublishedPrices } from "../supabase.js";
 import { CHANNEL_LABELS, UPGRADE_MESSAGE } from "../config.js";
 import { dirKey, quantile, respond } from "../util.js";
 import { loadPublishedIndexes } from "./get-index-benchmarks.js";
@@ -33,7 +33,7 @@ export async function handleGetMarketStats(
       select: "vendor_id,vendor_type,country,region,status",
       order: "vendor_id.asc",
     }),
-    queryAll<Record<string, any>>("sku_index", skuFilters, {
+    queryPublishedPrices<Record<string, any>>(skuFilters, {
       select: "vendor_id,model_id,modality,direction,normalized_price,normalized_price_unit",
       order: "sku_id.asc",
     }),

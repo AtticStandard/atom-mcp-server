@@ -5,7 +5,7 @@
 // ============================================================
 
 import { z } from "zod";
-import { enc, inList, queryAll, queryTable } from "../supabase.js";
+import { enc, inList, queryAll, queryPublishedPrices, queryTable } from "../supabase.js";
 import { CHANNEL_LABELS, LICENSE_LABELS, TIER_LABELS } from "../config.js";
 import { anchorOf, dirKey, errorResult, expandAnchors, findModels, MODEL_SELECT, respond, vendorLookup } from "../util.js";
 import type { Tier, ModelRegistry } from "../types.js";
@@ -28,7 +28,7 @@ export async function handleGetModelDetail(params: z.infer<z.ZodObject<typeof ge
   const ids = await expandAnchors([anchorId]);
 
   const [skus, membership, vendors] = await Promise.all([
-    queryAll<Record<string, any>>("sku_index", [`model_id=${inList(ids)}`, "normalized_price=gt.0"], {
+    queryPublishedPrices<Record<string, any>>([`model_id=${inList(ids)}`, "normalized_price=gt.0"], {
       select: "sku_id,vendor_id,vendor_name,model_id,model_name,modality,modality_subtype,direction,normalized_price,normalized_price_unit,billing_method",
       order: "normalized_price.asc,sku_id.asc",
     }),

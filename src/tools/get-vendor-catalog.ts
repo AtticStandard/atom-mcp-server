@@ -4,7 +4,7 @@
 // ============================================================
 
 import { z } from "zod";
-import { enc, queryAll } from "../supabase.js";
+import { enc, queryAll, queryPublishedPrices } from "../supabase.js";
 import { CHANNEL_LABELS } from "../config.js";
 import { gateResults } from "../auth.js";
 import { errorResult, respond } from "../util.js";
@@ -34,7 +34,7 @@ export async function handleGetVendorCatalog(params: z.infer<z.ZodObject<typeof 
   if (params.modality) filters.push(`modality=ilike.*${enc(params.modality)}*`);
   if (params.direction) filters.push(`direction=eq.${enc(params.direction)}`);
 
-  const skus = await queryAll<Record<string, any>>("sku_index", filters, {
+  const skus = await queryPublishedPrices<Record<string, any>>(filters, {
     select: "sku_id,model_id,model_name,modality,modality_subtype,direction,normalized_price,normalized_price_unit,billing_method",
     order: "model_name.asc,direction.asc",
   });

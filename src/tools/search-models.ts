@@ -6,7 +6,7 @@
 // ============================================================
 
 import { z } from "zod";
-import { enc, queryAll } from "../supabase.js";
+import { enc, queryAll, queryPublishedPrices } from "../supabase.js";
 import { CHANNEL_LABELS } from "../config.js";
 import { gateResults } from "../auth.js";
 import { anchorOf, respond, vendorLookup } from "../util.js";
@@ -43,7 +43,7 @@ export async function handleSearchModels(params: z.infer<z.ZodObject<typeof sear
   if (params.direction) skuFilters.push(`direction=eq.${enc(params.direction)}`);
   if (params.max_price !== undefined) skuFilters.push(`normalized_price=lte.${params.max_price}`);
 
-  let skus = await queryAll<Record<string, any>>("sku_index", skuFilters, {
+  let skus = await queryPublishedPrices<Record<string, any>>(skuFilters, {
     select:
       "sku_id,model_id,vendor_id,vendor_name,model_name,modality,modality_subtype,direction,normalized_price,normalized_price_unit,billing_method",
     order: "normalized_price.asc,sku_id.asc",

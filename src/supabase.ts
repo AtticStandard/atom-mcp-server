@@ -191,3 +191,23 @@ export async function getActiveDate(): Promise<string | null> {
     return gateCache.value;
   }
 }
+
+// ------------------------------------------------------------
+// Published prices (price_index at the gate)
+// ------------------------------------------------------------
+
+/**
+ * Current prices exactly as published: the price_index rows verified
+ * on the gate date, the same snapshot the live site reads. sku_index
+ * holds the newest scrape, which can run ahead of the published week,
+ * so no tool reads current prices from it.
+ */
+export async function queryPublishedPrices<T>(
+  filters: string[] = [],
+  options: Partial<QueryOptions> = {},
+  maxRows = 20000
+): Promise<T[]> {
+  const gate = await getActiveDate();
+  if (!gate) throw new Error("Published gate date is unavailable; prices cannot be served.");
+  return queryAll<T>("price_index", [`verification_date=eq.${gate}`, ...filters], options, maxRows);
+}

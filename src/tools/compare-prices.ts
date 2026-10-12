@@ -5,7 +5,7 @@
 // ============================================================
 
 import { z } from "zod";
-import { enc, inList, queryAll, queryTable } from "../supabase.js";
+import { enc, inList, queryAll, queryPublishedPrices, queryTable } from "../supabase.js";
 import { CHANNEL_LABELS, UPGRADE_MESSAGE } from "../config.js";
 import { anchorOf, dirKey, errorResult, expandAnchors, findModels, respond, vendorLookup } from "../util.js";
 import type { Tier } from "../types.js";
@@ -48,7 +48,7 @@ export async function handleComparePrices(params: z.infer<z.ZodObject<typeof com
   const skus: Record<string, any>[] = [];
   for (let i = 0; i < ids.length; i += 150) {
     skus.push(
-      ...(await queryAll<Record<string, any>>("sku_index", [...filters, `model_id=${inList(ids.slice(i, i + 150))}`], {
+      ...(await queryPublishedPrices<Record<string, any>>([...filters, `model_id=${inList(ids.slice(i, i + 150))}`], {
         select: "sku_id,vendor_id,vendor_name,model_id,model_name,modality,direction,normalized_price,normalized_price_unit,billing_method",
         order: "sku_id.asc",
       }))
