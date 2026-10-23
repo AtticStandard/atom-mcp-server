@@ -27,6 +27,7 @@ export interface VendorRegistry {
   vendor_type: string | null;
   parent_vendor: string | null;
   status: string | null;
+  pricing_currency?: string | null;
 }
 
 export interface ModelRegistry {

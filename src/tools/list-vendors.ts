@@ -1,6 +1,8 @@
 // ============================================================
 // Tool: list_vendors
 // Every vendor in the Attic Standard fleet with its channel.
+// Tracked services quoted in a currency with no published index
+// yet (status 'tracking') are listed too, marked as such.
 // ============================================================
 
 import { z } from "zod";
@@ -24,10 +26,14 @@ export async function handleListVendors(params: z.infer<z.ZodObject<typeof listV
   if (params.country) filters.push(`country=ilike.*${enc(params.country)}*`);
 
   let vendors = await queryAll<VendorRegistry>("vendor_registry", filters, {
-    select: "vendor_id,vendor_name,vendor_type,parent_vendor,country,region,vendor_url,pricing_page_url,status",
+    select: "vendor_id,vendor_name,vendor_type,parent_vendor,country,region,vendor_url,pricing_page_url,status,pricing_currency",
     order: "vendor_name.asc",
   });
-  vendors = vendors.filter((v) => !v.status || String(v.status).toLowerCase() === "active");
+  const tracked = (v: VendorRegistry) => {
+    const s = String(v.status || "active").toLowerCase();
+    return s === "active" || s === "tracking";
+  };
+  vendors = vendors.filter(tracked);
 
   if (params.channel) {
     const c = params.channel.trim().toLowerCase();
@@ -47,6 +53,11 @@ export async function handleListVendors(params: z.infer<z.ZodObject<typeof listV
     region: v.region,
     pricing_page: v.pricing_page_url,
     website: v.vendor_url,
+    pricing_currency: v.pricing_currency || "USD",
+    index_status:
+      String(v.status || "").toLowerCase() === "tracking"
+        ? "Tracked weekly; no published index in this currency yet"
+        : "In published indexes",
   }));
 
   return respond("list_vendors", tier, { total: formatted.length, vendors: formatted });
