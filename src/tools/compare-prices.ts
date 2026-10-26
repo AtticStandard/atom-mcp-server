@@ -80,7 +80,7 @@ export async function handleComparePrices(params: z.infer<z.ZodObject<typeof com
       skus: rows.length,
       vendors: new Set(rows.map((r) => r.vendor_id)).size,
       cheapest: lo,
-      dearest: hi,
+      highest: hi,
       spread_ratio: lo > 0 ? Math.round((hi / lo) * 100) / 100 : null,
     };
     return tier === "paid"

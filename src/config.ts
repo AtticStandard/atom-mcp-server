@@ -71,7 +71,7 @@ export const MARKET_KPIS: Record<string, { label: string; group: string; definit
   post_launch_drift: { label: "Post-launch drift", group: "Price dynamics",
     definition: "The share of models launched four to thirteen weeks ago whose market price is now below their launch week." },
   multivendor_spread: { label: "Multi-vendor spread", group: "Competition",
-    definition: "For models sold by two or more companies, the median ratio of the dearest company's input price to the cheapest's." },
+    definition: "For models sold by two or more companies, the median ratio of the highest company's input price to the lowest." },
   first_party_premium: { label: "First-party premium", group: "Competition",
     definition: "The share of models priced higher by their creator than by the median independent host, an inference platform or neocloud selling the same model." },
   marketplace_premium: { label: "Marketplace premium", group: "Competition",

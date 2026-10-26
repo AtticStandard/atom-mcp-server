@@ -70,11 +70,11 @@ export async function handleGetModelDetail(params: z.infer<z.ZodObject<typeof ge
   const summary: Record<string, any> = {};
   for (const s of skus) {
     const k = `${dirKey(s.direction)} (${s.normalized_price_unit})`;
-    const e = summary[k] || { skus: 0, vendors: new Set<string>(), cheapest: Infinity, dearest: 0 };
+    const e = summary[k] || { skus: 0, vendors: new Set<string>(), cheapest: Infinity, highest: 0 };
     e.skus += 1;
     e.vendors.add(s.vendor_id);
     e.cheapest = Math.min(e.cheapest, s.normalized_price);
-    e.dearest = Math.max(e.dearest, s.normalized_price);
+    e.highest = Math.max(e.highest, s.normalized_price);
     summary[k] = e;
   }
   for (const k of Object.keys(summary)) summary[k].vendors = summary[k].vendors.size;

@@ -56,7 +56,7 @@ Token prices are per 1,000 tokens. Other modalities use their own unit.
 | `list_vendors` | Free | The vendor fleet with channel, country and pricing page |
 | `search_models` | Free / PRO | Search every priced SKU by modality, vendor, channel, creator, family, tier, license, origin, reasoning, price and context |
 | `get_model_detail` | Free / PRO | One model's specs, the indexes it belongs to, and its price at every vendor |
-| `compare_prices` | Free / PRO | One model or family across all vendors: cheapest, dearest and spread per direction, with every offer on PRO |
+| `compare_prices` | Free / PRO | One model or family across all vendors: cheapest, highest and spread per direction, with every offer on PRO |
 | `get_vendor_catalog` | Free / PRO | One vendor's channel, coverage and full price list |
 
 ---

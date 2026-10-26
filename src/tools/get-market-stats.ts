@@ -7,6 +7,9 @@
 // Coverage counts include tracked services quoted in currencies
 // with no published index yet (status 'tracking'), as on the
 // site; price distributions stay USD-only.
+// A vendor is a company (parent_vendor, else vendor_name); a
+// pricing service is one price list. Same rule as the coverage
+// page and v_summary_stats.
 // ============================================================
 
 import { z } from "zod";
@@ -33,7 +36,7 @@ export async function handleGetMarketStats(
   const [gate, vendors, skus, indexes, registry] = await Promise.all([
     getActiveDate(),
     queryAll<Record<string, any>>("vendor_registry", [], {
-      select: "vendor_id,vendor_type,country,region,status,pricing_currency",
+      select: "vendor_id,vendor_name,parent_vendor,vendor_type,country,region,status,pricing_currency",
       order: "vendor_id.asc",
     }),
     queryPublishedPrices<Record<string, any>>(skuFilters, {
@@ -50,7 +53,6 @@ export async function handleGetMarketStats(
 
   const statusOf = (v: Record<string, any>) => String(v.status || "active").toLowerCase();
   const active = vendors.filter((v) => statusOf(v) === "active" || statusOf(v) === "tracking");
-  const trackingIds = new Set(vendors.filter((v) => statusOf(v) === "tracking").map((v) => v.vendor_id));
   const trackedIds = new Set(active.map((v) => v.vendor_id));
 
   // Non-USD SKUs of tracked services at the published week: counted in
@@ -64,11 +66,31 @@ export async function handleGetMarketStats(
       })).filter((s) => trackedIds.has(s.vendor_id))
     : [];
   const allSkus = [...skus, ...intl];
-  const vendorsByChannel: Record<string, number> = {};
-  for (const v of active) {
-    const k = CHANNEL_LABELS[v.vendor_type] || v.vendor_type || "Unclassified";
-    vendorsByChannel[k] = (vendorsByChannel[k] || 0) + 1;
+  // A vendor is a company: its pricing services share one parent.
+  const keyOf = (v: Record<string, any>) => String(v.parent_vendor || v.vendor_name || v.vendor_id);
+  const skusByService = new Map<string, number>();
+  for (const s of allSkus) skusByService.set(s.vendor_id, (skusByService.get(s.vendor_id) || 0) + 1);
+  const priced = active.filter((v) => (skusByService.get(v.vendor_id) || 0) > 0);
+  const channelOf = (v: Record<string, any>) => CHANNEL_LABELS[v.vendor_type] || v.vendor_type || "Unclassified";
+
+  // A vendor is listed under the channel of its lead service: an indexed
+  // service first, then the one with the most SKUs (as on the coverage page).
+  const lead = new Map<string, Record<string, any>>();
+  for (const v of priced) {
+    const k = keyOf(v);
+    const cur = lead.get(k);
+    const rank = (x: Record<string, any>) => [statusOf(x) === "active" ? 1 : 0, skusByService.get(x.vendor_id) || 0];
+    if (!cur) { lead.set(k, v); continue; }
+    const [a1, a2] = rank(v), [b1, b2] = rank(cur);
+    if (a1 > b1 || (a1 === b1 && a2 > b2)) lead.set(k, v);
   }
+  const vendorsByChannel: Record<string, number> = {};
+  for (const v of lead.values()) vendorsByChannel[channelOf(v)] = (vendorsByChannel[channelOf(v)] || 0) + 1;
+  const servicesByChannel: Record<string, number> = {};
+  for (const v of priced) servicesByChannel[channelOf(v)] = (servicesByChannel[channelOf(v)] || 0) + 1;
+  const indexed = priced.filter((v) => statusOf(v) === "active");
+  const vendorKeys = new Set(priced.map(keyOf));
+  const indexedKeys = new Set(indexed.map(keyOf));
 
   // Distribution per modality + unit + direction.
   const groups = new Map<string, number[]>();
@@ -103,10 +125,14 @@ export async function handleGetMarketStats(
   const body: Record<string, unknown> = {
     published_week: gate,
     coverage: {
-      active_vendors: active.length,
-      tracked_not_indexed: trackingIds.size,
+      vendors: vendorKeys.size,
+      pricing_services: priced.length,
+      vendors_in_published_indexes: indexedKeys.size,
+      pricing_services_in_published_indexes: indexed.length,
+      vendors_tracked_not_yet_indexed: vendorKeys.size - indexedKeys.size,
       vendors_by_channel: vendorsByChannel,
-      countries: new Set(active.map((v) => v.country).filter(Boolean)).size,
+      pricing_services_by_channel: servicesByChannel,
+      countries: new Set(priced.map((v) => v.country).filter(Boolean)).size,
       models: new Set(allSkus.map((s) => anchorBy.get(s.model_id) || s.model_id)).size,
       priced_skus: allSkus.length,
       usd_priced_skus: skus.length,
@@ -114,7 +140,7 @@ export async function handleGetMarketStats(
     },
     skus_by_modality: modalities,
     price_distribution: distribution,
-    note: "Prices are in each group's own unit (per 1,000 tokens for token models). Distributions cover USD-quoted SKUs only; SKUs of services quoted in other currencies (tracked, no published index yet) are counted in coverage. Groups with fewer than 20 SKUs are left out.",
+    note: "Prices are in each group's own unit (per 1,000 tokens for token models). Distributions cover USD-quoted SKUs only; SKUs of services quoted in other currencies (tracked, no published index yet) are counted in coverage. A vendor is a company; a pricing service is one price list, and some vendors publish several (for example a cloud's separate AI services, or a separate list for mainland China). Vendors are tracked weekly; those quoting only in a currency with no published index yet are tracked but not in an index. Groups with fewer than 20 SKUs are left out.",
   };
 
   if (tier === "paid") {

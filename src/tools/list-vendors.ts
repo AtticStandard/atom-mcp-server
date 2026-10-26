@@ -1,6 +1,7 @@
 // ============================================================
 // Tool: list_vendors
-// Every vendor in the Attic Standard fleet with its channel.
+// Every pricing service in the Attic Standard fleet with its channel,
+// grouped under its vendor (company) through the parent field.
 // Tracked services quoted in a currency with no published index
 // yet (status 'tracking') are listed too, marked as such.
 // ============================================================
@@ -60,5 +61,12 @@ export async function handleListVendors(params: z.infer<z.ZodObject<typeof listV
         : "In published indexes",
   }));
 
-  return respond("list_vendors", tier, { total: formatted.length, vendors: formatted });
+  // A vendor is a company (parent, else name); each row is one pricing service.
+  const vendorCount = new Set(vendors.map((v) => v.parent_vendor || v.vendor_name)).size;
+  return respond("list_vendors", tier, {
+    vendors_total: vendorCount,
+    pricing_services_total: formatted.length,
+    note: "Each row is one pricing service (one price list). A vendor is a company; some vendors publish several services, for example a cloud's separate AI services or a separate list for mainland China.",
+    pricing_services: formatted,
+  });
 }

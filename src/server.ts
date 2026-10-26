@@ -142,7 +142,7 @@ Examples:
   add(
     "get_market_stats",
     "Market coverage and price distribution",
-    `Coverage of the tracked market (active vendors by channel, countries, models, priced SKUs, published indexes) and price distributions split by modality, unit and direction. ${TIERED} ${UNITS}`,
+    `Coverage of the tracked market (vendors and pricing services, in total, by channel and in published indexes; countries, models, priced SKUs, published indexes) and price distributions split by modality, unit and direction. ${TIERED} ${UNITS}`,
     getMarketStatsSchema,
     handleGetMarketStats
   );
@@ -150,7 +150,7 @@ Examples:
   add(
     "list_vendors",
     "List vendors",
-    `Every vendor in the Attic Standard fleet with its channel (model developer, cloud marketplace, inference platform or neocloud), country, region and pricing page. Filter by channel, region or country.`,
+    `Every pricing service in the Attic Standard fleet, with its vendor (the company, in parent), channel (model developer, cloud marketplace, inference platform or neocloud), country, region, currency and pricing page. Returns the vendor and pricing-service totals. Filter by channel, region or country.`,
     listVendorsSchema,
     handleListVendors
   );
@@ -180,7 +180,7 @@ Examples:
   add(
     "compare_prices",
     "Compare prices across vendors",
-    `The same model, or a whole family, priced across every vendor that sells it: cheapest and dearest offer, vendor count and spread ratio for each direction, plus each offer with its channel. ${TIERED} ${UNITS}
+    `The same model, or a whole family, priced across every vendor that sells it: cheapest and highest offer, vendor count and spread ratio for each direction, plus each offer with its channel. ${TIERED} ${UNITS}
 
 Examples:
   - "Cheapest place to run Llama 3.3 70B" -> model_name="Llama 3.3 70B"
