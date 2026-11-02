@@ -79,10 +79,20 @@ export const MARKET_KPIS: Record<string, { label: string; group: string; definit
 };
 
 export const BASE_MONTH = "2026-05";
+/** Regional indexes (codes ending EUR or CNY) are priced in the vendors' own
+ *  currency with no conversion, and based on their first assessed week. */
+export const REGIONAL_BASE_LABEL = "October 19, 2026 = 100";
+export function currencyForCode(code: string): "USD" | "EUR" | "CNY" {
+  const m = String(code).trim().toUpperCase().split(" ")[2];
+  return m === "EUR" ? "EUR" : m === "CNY" ? "CNY" : "USD";
+}
+export function baseForCode(code: string): string {
+  return currencyForCode(code) === "USD" ? "May 2026 = 100" : REGIONAL_BASE_LABEL;
+}
 export const BASE_MONTH_END = "2026-06-01";
 
 export const BENCHMARK_NOTE =
-  "Benchmark: the chained level, expressed as May 2026 = 100 (the average of that month's weeks); it moves only when models present in consecutive weeks are repriced, and each model joins from its second priced week. " +
-  "Spot: what the market charges this week, in dollars; each model is taken at the median of its vendors' prices, and the spot is the median across those models, with the 25th and 75th percentiles. " +
-  "Spot changes are measured against the spot's own May 2026 average, four published weeks back and one week back, so they reflect models arriving and leaving as well as repricing. " +
-  "Where a basket averaged fewer than 15 models in May 2026, or today's count differs from that average by more than half, changed_since_base is true: read spot changes with that in view.";
+  "Benchmark: the chained level, expressed as May 2026 = 100 for global indexes (the average of that month's weeks) and October 19, 2026 = 100 for regional indexes (codes ending EUR or CNY, from their first assessed week); it moves only when models present in consecutive weeks are repriced, and each model joins from its second priced week. " +
+  "Spot: what the market charges this week, in dollars for global indexes and in the vendors' own currency for regional ones (euros for EUR, yuan for CNY, with no conversion); each model is taken at the median of its vendors' prices, and the spot is the median across those models, with the 25th and 75th percentiles. " +
+  "Spot changes are measured against the spot's own base (its May 2026 average, or its October 19, 2026 level for regional indexes), four published weeks back and one week back, so they reflect models arriving and leaving as well as repricing. " +
+  "Where a basket averaged fewer than 15 models in May 2026, or today's count differs from that average by more than half, changed_since_base is true: read spot changes with that in view. Regional indexes have no May 2026 basket, so it is null for them.";

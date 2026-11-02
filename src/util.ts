@@ -34,6 +34,7 @@ export function normIndexCode(input: string): string {
   const s = input.trim().toUpperCase().replace(/\s+/g, " ");
   if (/^[A-Z]{3}$/.test(s)) return `AIPI ${s} GLB`;
   if (/^AIPI [A-Z]{3}$/.test(s)) return `${s} GLB`;
+  if (/^[A-Z]{3} (GLB|EUR|CNY)$/.test(s)) return `AIPI ${s}`;
   return s;
 }
 

@@ -6,7 +6,7 @@
 
 import { z } from "zod";
 import { enc, getActiveDate, inList, queryAll, queryTable } from "../supabase.js";
-import { BENCHMARK_NOTE, CHANNEL_LABELS, UPGRADE_MESSAGE } from "../config.js";
+import { BENCHMARK_NOTE, CHANNEL_LABELS, UPGRADE_MESSAGE, baseForCode, currencyForCode } from "../config.js";
 import { anchorOf, dirKey, errorResult, expandAnchors, findModels, normIndexCode, respond, round, vendorLookup } from "../util.js";
 import type { Tier } from "../types.js";
 
@@ -14,7 +14,7 @@ export const getPriceHistorySchema = {
   index_code: z
     .string()
     .optional()
-    .describe("Index history, e.g. 'TXT', 'DEV', 'OSS' or 'AIPI TXT GLB'. Free."),
+    .describe("Index history, e.g. 'TXT', 'DEV', 'OSS', 'AIPI TXT GLB' or a regional version such as 'TXT CNY'. Free."),
   model_name: z
     .string()
     .optional()
@@ -72,7 +72,8 @@ export async function handleGetPriceHistory(
       mode: "index",
       index_code: code,
       weeks: series.length,
-      base: "May 2026 = 100",
+      base: baseForCode(code),
+      currency: currencyForCode(code),
       series,
       how_to_read: BENCHMARK_NOTE,
     });

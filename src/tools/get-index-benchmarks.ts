@@ -7,7 +7,7 @@
 
 import { z } from "zod";
 import { enc, getActiveDate, inList, queryTable } from "../supabase.js";
-import { BASE_MONTH, BASE_MONTH_END, BENCHMARK_NOTE, INDEX_FAMILIES, METHODOLOGY_PAGE } from "../config.js";
+import { BASE_MONTH, BASE_MONTH_END, BENCHMARK_NOTE, INDEX_FAMILIES, METHODOLOGY_PAGE, baseForCode, currencyForCode } from "../config.js";
 import { dirKey, errorResult, normIndexCode, respond, round } from "../util.js";
 import type { Tier } from "../types.js";
 
@@ -15,7 +15,7 @@ export const getIndexBenchmarksSchema = {
   index_code: z
     .string()
     .optional()
-    .describe("One index, e.g. 'TXT', 'NCL', 'FLG' or the full code 'AIPI TXT GLB'. Omit for all published indexes."),
+    .describe("One index, e.g. 'TXT', 'NCL', 'FLG', the full code 'AIPI TXT GLB', or a regional version such as 'TXT CNY' or 'AIPI MML EUR'. Omit for all published indexes."),
   index_category: z
     .string()
     .optional()
@@ -150,6 +150,8 @@ export async function handleGetIndexBenchmarks(
       description: r.index_description,
       question: r.index_question || undefined,
       unit: v?.unit || r.unit,
+      currency: currencyForCode(r.index_code),
+      base: baseForCode(r.index_code),
       benchmark: bench,
       spot: {
         input: spot(v, "input"),
