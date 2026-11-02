@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.AtticStandard/atom-mcp-server",
   "title": "Attic Standard",
-  "description": "The global price benchmark for AI inference: 23 price indexes, market KPIs and SKU-level prices.",
+  "description": "The global price benchmark for AI inference: 29 price indexes, market KPIs and SKU-level prices.",
   "version": "2.1.0",
   "websiteUrl": "https://atticstandard.com/mcp",
   "repository": {

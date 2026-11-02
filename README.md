@@ -23,7 +23,7 @@ This server puts that data inside any MCP-compatible assistant (Claude, ChatGPT,
 
 ## The indexes
 
-23 published indexes in six families, each reported for input, cached input and output where the modality has them.
+29 published indexes: 23 global indexes in six families, priced in US dollars, and six regional indexes priced in each market's own currency. Each is reported for input, cached input and output where the modality has them.
 
 | Family | Indexes | What it answers |
 |---|---|---|
@@ -34,10 +34,12 @@ This server puts that data inside any MCP-compatible assistant (Claude, ChatGPT,
 | **Origin** | United States, China | How do the two model-building countries price? |
 | **Use case** | Reasoning, Coding | What do specialist models cost? |
 
+The regional indexes follow the same rules on each market's own list prices, with no currency conversion: mainland China in yuan (Text, Multimodal, Image, Voice; codes ending CNY) and Europe in euros (Text, Multimodal; codes ending EUR). Each is set at 100 on October 19, 2026, its first assessed week, and is published once its market reaches at least eight models and five vendors.
+
 Each index carries two numbers:
 
-- **Benchmark**: the chained level, May 2026 = 100 (the average of that month's weeks), with week, month and vs-base changes.
-- **Spot**: what the market charges this week, in dollars. Each model is taken at the median of its vendors' prices, and the spot is the median across those models, with the interquartile range. Its change is stated against its own May 2026 average, month on month and week on week, and because the spot follows the market as it stands, that change reflects models arriving and leaving as well as repricing.
+- **Benchmark**: the chained level, May 2026 = 100 for the global indexes (the average of that month's weeks) and October 19, 2026 = 100 for the regional indexes, with week, month and vs-base changes.
+- **Spot**: what the market charges this week, in dollars for the global indexes and in yuan or euros for the regional ones. Each model is taken at the median of its vendors' prices, and the spot is the median across those models, with the interquartile range. Its change is stated against its own May 2026 average, month on month and week on week, and because the spot follows the market as it stands, that change reflects models arriving and leaving as well as repricing.
 
 Token prices are per 1,000 tokens. Other modalities use their own unit.
 
